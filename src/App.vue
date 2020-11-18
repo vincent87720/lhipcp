@@ -267,7 +267,7 @@ export default {
       var governmentTotal = 0;
       var companyTotal = 0;
       var selfTotal = 0;
-      for (var i=0;i<4;i++) {
+      for (var i=0;i<5;i++) {
         const obj = this.Insurance[i];
         
         if(obj.name == "普通事故保險費"){
@@ -281,7 +281,7 @@ export default {
         else if(obj.name == "就業保險費"){
           insurancePremium = this.laborSalaryLevel.premium * 0.01;
         }
-        else if(obj.name == "總計負擔保費"){
+        else if(obj.name == "總計勞保負擔保費"){
           obj.government = governmentTotal;
           obj.company = companyTotal;
           obj.self = selfTotal;
