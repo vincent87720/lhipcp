@@ -3,75 +3,103 @@
     <v-container fluid>
       <v-row align="center">
         <v-col
-          class="d-flex"
+          class="d-flex justify-center"
+          cols="12"
+        >
+          <h2>勞健保自負額計算程式</h2>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
           cols="12"
           md="6"
+          sm="12"
         >
-          <v-row align="center">
-            <v-col
-              class="d-flex"
-              cols="12"
-              sm="12"
-            >
-              <v-text-field 
-                label="薪水"
-                v-model="salary"
-                @keyup="onVarChange"
-              ></v-text-field>
-            </v-col>
-            <v-col
-              class="d-flex"
-              cols="12"
-              sm="12"
-            >
-              <v-select
-                label="適用職業災害費率"
-                v-model="rate"
-                :items="items"
-                @input="onVarChange"
-              ></v-select>
-            </v-col>
-            <v-col
-              cols="12"
-              sm="12"
-            >
-              <v-date-picker
-                v-model="dates"
-                @input="onVarChange"
-                full-width
-                range
-              ></v-date-picker>
-            </v-col>
-          </v-row>
+          <v-alert
+            class="d-flex justify-center align-center"
+            border="top"
+            color="blue-grey"
+            dark
+            dense
+          >
+            <h3>勞保自行負擔總計{{Insurance[3].self}}元</h3>
+          </v-alert>
         </v-col>
-
-        <v-col class="d-none d-sm-flex d-md-none" >
+        <v-col
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-alert
+            class="d-flex justify-center align-center"
+            border="top"
+            color="blue-grey"
+            text
+            dense
+          >
+            <h3>健保自行負擔總計{{Insurance[3].self}}元</h3>
+          </v-alert>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          class="d-flex order-0"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-text-field
+            label="薪水"
+            v-model="salary"
+            @keyup="onVarChange"
+            type='tel'
+          ></v-text-field>
+        </v-col>
+        <v-col
+          class="d-flex order-xl-1 order-lg-1 order-md-1 order-3"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-select
+            label="適用職業災害費率"
+            v-model="rate"
+            :items="items"
+            @input="onVarChange"
+          ></v-select>
+        </v-col>
+        
+        <v-col 
+          class="d-flex d-md-none order-2"
+        >
           <v-divider></v-divider>
         </v-col>
 
         <v-col
-          class="d-flex"
+          class="d-flex order-xl-3 order-lg-3 order-md-3 order-1"
           cols="12"
           md="6"
+          sm="12"
         >
-          <v-row align="center">
-            <v-col
-              cols="12"
-              sm="12"
-            >
-              <h1>自行負擔總計{{Insurance[3].self}}元</h1>
-            </v-col>
-            <v-col
-              cols="12"
-              sm="12"
-            >
-              <v-data-table
-                :headers="table_Headers"
-                :items="Insurance"
-                class="elevation-1"
-              ></v-data-table>
-            </v-col>
-          </v-row>
+          <v-date-picker
+            v-model="dates"
+            @input="onVarChange"
+            color="blue-grey"
+            full-width
+            range
+          ></v-date-picker>
+        </v-col>
+        <v-col
+          class="order-3"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-data-table
+            :headers="table_Headers"
+            :items="Insurance"
+            class="elevation-1"
+          ></v-data-table>
         </v-col>
       </v-row>
     </v-container>
