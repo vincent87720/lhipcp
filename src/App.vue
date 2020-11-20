@@ -42,8 +42,52 @@
         </v-col>
       </v-row>
       <v-row>
+        <!-- 顯示勞保計算公式 -->
         <v-col
-          class="d-flex order-0"
+          class="order-xl-0 order-lg-0 order-md-0 order-3 d-flex justify-center align-stretch flex-column"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-alert
+            class="d-flex justify-center align-center"
+            color="blue-grey"
+            dark
+            dense
+          >
+            <h3>普通事故保險費</h3>
+            <p>{{laborSalaryLevel.premium}}(投保薪資)*10%(普通事故保險費費率)*20%(自行負擔比率)/30(每月天數)*{{totalDate}}(實際天數)={{Insurance[0].self}}</p>
+            <h3>+</h3>
+            <h3>就業保險費</h3>
+            <p>{{laborSalaryLevel.premium}}(投保薪資)*1%(就業保險費)*20%(自行負擔比率)/30(每月天數)*{{totalDate}}(實際天數)={{Insurance[2].self}}</p>
+            <h3>=</h3>
+            <h3>總金額</h3>
+            <h3>{{Insurance[3].self}}</h3>
+          </v-alert>
+        </v-col>
+        <!-- 顯示健保計算公式 -->
+        <v-col
+          class="order-xl-1 order-lg-1 order-md-1 order-4 d-flex justify-center align-stretch flex-column"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-alert
+            class="d-flex justify-center align-stretch"
+            color="blue-grey"
+            dark
+            dense
+            text
+          >
+            <h3>健保保險費</h3>
+            <p>{{healthSalaryLevel.premium}}(投保薪資)*4.69%(健保保險費費率)*30%(自行負擔比率)={{Insurance[4].self}}</p>
+            <h3>=</h3>
+            <h3>總金額</h3>
+            <h3>{{Insurance[4].self}}</h3>
+          </v-alert>
+        </v-col>
+        <v-col
+          class="order-xl-2 order-lg-2 order-md-2 order-0"
           cols="12"
           md="6"
           sm="12"
@@ -56,7 +100,7 @@
           ></v-text-field>
         </v-col>
         <v-col
-          class="d-flex order-xl-1 order-lg-1 order-md-1 order-3"
+          class="order-xl-3 order-lg-3 order-md-3 order-5"
           cols="12"
           md="6"
           sm="12"
@@ -76,7 +120,7 @@
         </v-col>
 
         <v-col
-          class="d-flex order-xl-3 order-lg-3 order-md-3 order-1"
+          class="order-xl-4 order-lg-4 order-md-4 order-1"
           cols="12"
           md="6"
           sm="12"
@@ -90,7 +134,7 @@
           ></v-date-picker>
         </v-col>
         <v-col
-          class="order-3"
+          class="order-5"
           cols="12"
           md="6"
           sm="12"
