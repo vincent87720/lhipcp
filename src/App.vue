@@ -168,22 +168,21 @@ export default {
     items:[0.11,0.12,0.13,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,
             0.26,0.27,0.28,0.37,0.39,0.40,0.41,0.47,0.48,0.53,0.61,0.92,0.96],
     laborRangeSet: [
-      {level: 1 ,rangeStart:  0,     rangeEnd: 23800, premium: 23800},
-      {level: 2 ,rangeStart: 	23801, rangeEnd: 24000, premium: 24000},
-      {level: 3 ,rangeStart: 	24001, rangeEnd: 25200, premium: 25200},
-      {level: 4 ,rangeStart:  25201, rangeEnd: 26400, premium: 26400},
-      {level: 5 ,rangeStart: 	26401, rangeEnd: 27600, premium: 27600},
-      {level: 6 ,rangeStart: 	27601, rangeEnd: 28800, premium: 28800},
-      {level: 7 ,rangeStart: 	28801, rangeEnd: 30300, premium: 30300},
-      {level: 8 ,rangeStart: 	30301, rangeEnd: 31800, premium: 31800},
-      {level: 9 ,rangeStart: 	31801, rangeEnd: 33300, premium: 33300},
-      {level: 10,rangeStart: 	33301, rangeEnd: 34800, premium: 34800},
-      {level: 11,rangeStart: 	34801, rangeEnd: 36300, premium: 36300},
-      {level: 12,rangeStart: 	36301, rangeEnd: 38200, premium: 38200},
-      {level: 13,rangeStart: 	38201, rangeEnd: 40100, premium: 40100},
-      {level: 14,rangeStart: 	40101, rangeEnd: 42000, premium: 42000},
-      {level: 15,rangeStart: 	42001, rangeEnd: 43900, premium: 43900},
-      {level: 16,rangeStart:  43901, rangeEnd: null , premium: 45800}
+      {level: 1 ,rangeStart: 	0, rangeEnd: 24000, premium: 24000},
+      {level: 2 ,rangeStart: 	24001, rangeEnd: 25200, premium: 25200},
+      {level: 3 ,rangeStart:  25201, rangeEnd: 26400, premium: 26400},
+      {level: 4 ,rangeStart: 	26401, rangeEnd: 27600, premium: 27600},
+      {level: 5 ,rangeStart: 	27601, rangeEnd: 28800, premium: 28800},
+      {level: 6 ,rangeStart: 	28801, rangeEnd: 30300, premium: 30300},
+      {level: 7 ,rangeStart: 	30301, rangeEnd: 31800, premium: 31800},
+      {level: 8 ,rangeStart: 	31801, rangeEnd: 33300, premium: 33300},
+      {level: 9,rangeStart: 	33301, rangeEnd: 34800, premium: 34800},
+      {level: 10,rangeStart: 	34801, rangeEnd: 36300, premium: 36300},
+      {level: 11,rangeStart: 	36301, rangeEnd: 38200, premium: 38200},
+      {level: 12,rangeStart: 	38201, rangeEnd: 40100, premium: 40100},
+      {level: 13,rangeStart: 	40101, rangeEnd: 42000, premium: 42000},
+      {level: 14,rangeStart: 	42001, rangeEnd: 43900, premium: 43900},
+      {level: 15,rangeStart:  43901, rangeEnd: null , premium: 45800}
     ],
     healthRangeSet: [
       {level: 1 ,rangeStart: 0,      rangeEnd: 23800,  premium: 23800},
@@ -278,6 +277,9 @@ export default {
           dateEnd[2] = 30;
           dateEnd[1] -= 1;
         }
+        if(dateEnd[2]>30){
+          dateEnd[2] = 30;
+        }
         if(dateStart[2]>=30){
           totalDate += 1;
         }
@@ -315,7 +317,7 @@ export default {
         const obj = this.Insurance[i];
         
         if(obj.name == "普通事故保險費"){
-          insurancePremium = this.laborSalaryLevel.premium * 0.1;
+          insurancePremium = this.laborSalaryLevel.premium * 0.105;//勞保普通事故保險費率10.5%
         }
         else if(obj.name == "職業災害保險費"){
           obj.company = Math.round(this.laborSalaryLevel.premium * this.rate /100 /30 * this.totalDate);
@@ -323,7 +325,7 @@ export default {
           continue;
         }
         else if(obj.name == "就業保險費"){
-          insurancePremium = this.laborSalaryLevel.premium * 0.01;
+          insurancePremium = this.laborSalaryLevel.premium * 0.01;//就業保險費率1%
         }
         else if(obj.name == "總計勞保負擔保費"){
           obj.government = governmentTotal;
