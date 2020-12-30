@@ -263,6 +263,17 @@ export default {
           dateStart[i] = parseInt(dateStart[i]);
           dateEnd[i] = parseInt(dateEnd[i]);
         }
+
+        //判斷開始時間是否小於結束時間，若沒有則交換
+        var swap = [];
+        let startInt = new Date(this.dates[0]).getTime();
+        let endInt = new Date(this.dates[1]).getTime();
+        if(startInt>endInt){
+          swap = dateStart;
+          dateStart = dateEnd;
+          dateEnd = swap;
+        }
+
         var base = dateStart[0];
         dateStart[0] -= base;
         dateEnd[0] -= base;
