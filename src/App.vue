@@ -369,7 +369,7 @@ export default {
         }
       }
 
-      var insurancePremium = 0.0469;//保險費率: 4.69%
+      var insurancePremium = 0.0517;//保險費率: 4.69%
 
       this.Insurance[pos].government = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.1*1.58);
       this.Insurance[pos].company = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.6*1.58);
