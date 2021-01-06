@@ -80,7 +80,7 @@
             text
           >
             <h3>健保保險費</h3>
-            <p>{{healthSalaryLevel.premium}}(投保薪資)*4.69%(健保保險費費率)*30%(自行負擔比率)={{Insurance[4].self}}</p>
+            <p>{{healthSalaryLevel.premium}}(投保薪資)*4.69%(健保保險費費率)*30%(自行負擔比率)*{{totalMonth}}(月份數量)={{Insurance[4].self}}</p>
             <h3>=</h3>
             <h3>總金額</h3>
             <h3>{{Insurance[4].self}}</h3>
@@ -164,6 +164,7 @@ export default {
     healthSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
     rate: 0,
     dates: [],
+    totalMonth:0,
     totalDate: 0,
     items:[0.11,0.12,0.13,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,
             0.26,0.27,0.28,0.37,0.39,0.40,0.41,0.47,0.48,0.53,0.61,0.92,0.96],
@@ -274,10 +275,11 @@ export default {
         }
 
         var base = dateStart[0];
-        dateStart[0] -= base;
-        dateEnd[0] -= base;
-        dateEnd[1] = dateEnd[0]*12+dateEnd[1];
-        while(dateStart[1] != dateEnd[1]){
+        var yearCount = dateEnd[0]-dateStart[0];
+        var monthStart = dateStart[1];
+        var monthEnd = yearCount*12+dateEnd[1];
+        this.totalMonth = monthEnd-monthStart+1;
+        while(monthStart != monthEnd){
           if(dateEnd[2]>30){
             totalDate+=30;
           }
@@ -285,7 +287,7 @@ export default {
             totalDate+=dateEnd[2];
           }
           dateEnd[2] = 30;
-          dateEnd[1] -= 1;
+          monthEnd -= 1;
         }
         if(dateEnd[2]>30){
           dateEnd[2] = 30;
@@ -369,11 +371,11 @@ export default {
         }
       }
 
-      var insurancePremium = 0.0517;//保險費率: 4.69%
+      var insurancePremium = 0.0517;//保險費率: 5.17%
 
-      this.Insurance[pos].government = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.1*1.58);
-      this.Insurance[pos].company = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.6*1.58);
-      this.Insurance[pos].self = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.3);
+      this.Insurance[pos].government = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.1*1.58*this.totalMonth);
+      this.Insurance[pos].company = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.6*1.58*this.totalMonth);
+      this.Insurance[pos].self = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.3*this.totalMonth);
 
     },
     onVarChange(){
