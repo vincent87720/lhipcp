@@ -3,12 +3,29 @@
     <v-container fluid>
       <v-row align="center">
         <v-col
+          class="d-flex justify-start align-center order-sm-first order-last"
+          cols="12"
+          sm="4"
+        >
+          <v-switch
+            class="pl-1 mt-0"
+            v-model="modeSwitch"
+            color="blue-grey"
+            inset
+            dense
+            :label="`${modeSwitch ? '雇主':'員工'}`"
+          ></v-switch>
+        </v-col>
+        <v-col
           class="d-flex justify-center"
           cols="12"
+          sm="4"
         >
-          <h2>勞健保自負額計算程式</h2>
+          <h2>勞健保計算程式</h2>
         </v-col>
+        <v-spacer class=" order-sm-last order-first"></v-spacer>
       </v-row>
+
       <v-row>
         <v-col
           cols="12"
@@ -22,7 +39,7 @@
             dark
             dense
           >
-            <h3>勞保自行負擔總計{{Insurance[3].self}}元</h3>
+            <h3>勞保{{modeSwitch ? '雇主':'自行'}}負擔總計{{modeSwitch ? Insurance[3].company:Insurance[3].self}}元</h3>
           </v-alert>
         </v-col>
         <v-col
@@ -37,7 +54,7 @@
             text
             dense
           >
-            <h3>健保自行負擔總計{{Insurance[4].self}}元</h3>
+            <h3>健保{{modeSwitch ? '雇主':'自行'}}負擔總計{{modeSwitch ? Insurance[4].company:Insurance[4].self}}元</h3>
           </v-alert>
         </v-col>
       </v-row>
@@ -56,13 +73,35 @@
             dense
           >
             <h3>普通事故保險費</h3>
-            <p>{{laborSalaryLevel.premium}}(投保薪資)*10%(普通事故保險費費率)*20%(自行負擔比率)/30(每月天數)*{{totalDate}}(實際天數)={{Insurance[0].self}}</p>
+            <p>
+              {{laborSalaryLevel.premium}}(投保薪資) *{{ordinaryAccidentInsuranceRate*100}}%(普通事故保險費費率)
+              {{modeSwitch ? '*70%(雇主負擔比率)':'*20%(自行負擔比率)'}}
+              /30(每月天數) *{{totalDate}}(實際天數)
+              ={{modeSwitch ? Insurance[0].company:Insurance[0].self}}
+            </p>
+            
+            <h3>+</h3>
+            <h3>職業災害保險費</h3>
+            <p>
+            {{modeSwitch ? laborSalaryLevel.premium :'0'}}
+            {{modeSwitch ? '(投保薪資) *':''}}
+            {{modeSwitch ? rate:''}}
+            {{modeSwitch ? '%(職業災害保險費費率) /30(每月天數) *':''}}
+            {{modeSwitch ? totalDate:''}}
+            {{modeSwitch ? '(實際天數)=':''}}
+            {{modeSwitch ? Insurance[1].company:''}}
+            
             <h3>+</h3>
             <h3>就業保險費</h3>
-            <p>{{laborSalaryLevel.premium}}(投保薪資)*1%(就業保險費)*20%(自行負擔比率)/30(每月天數)*{{totalDate}}(實際天數)={{Insurance[2].self}}</p>
+            <p>
+              {{laborSalaryLevel.premium}}(投保薪資) *{{employmentInsuranceRate*100}}%(就業保險費費率)
+              {{modeSwitch ? '*70%(雇主負擔比率)':'*20%(自行負擔比率)'}}
+              /30(每月天數) *{{totalDate}}(實際天數)
+              ={{modeSwitch ? Insurance[2].company:Insurance[2].self}}
+            </p>
             <h3>=</h3>
             <h3>總金額</h3>
-            <h3>{{Insurance[3].self}}</h3>
+            <h3>{{modeSwitch ? Insurance[3].company:Insurance[3].self}}</h3>
           </v-alert>
         </v-col>
         <!-- 顯示健保計算公式 -->
@@ -80,10 +119,16 @@
             text
           >
             <h3>健保保險費</h3>
-            <p>{{healthSalaryLevel.premium}}(投保薪資)*4.69%(健保保險費費率)*30%(自行負擔比率)*{{totalMonth}}(月份數量)={{Insurance[4].self}}</p>
+            <p>
+              {{healthSalaryLevel.premium}}(投保薪資) *{{healthInsuranceRate*100}}%(健保保險費費率)
+              {{modeSwitch ? '*60%(雇主負擔比率)':'*30%(自行負擔比率)'}}
+              *{{totalMonth}}(月份數量)
+              {{modeSwitch ? '*1.58(1+平均眷口數)':''}}
+              ={{modeSwitch ? Insurance[4].company:Insurance[4].self}}
+            </p>
             <h3>=</h3>
             <h3>總金額</h3>
-            <h3>{{Insurance[4].self}}</h3>
+            <h3>{{modeSwitch ? Insurance[4].company:Insurance[4].self}}</h3>
           </v-alert>
         </v-col>
         <v-col
@@ -97,6 +142,8 @@
             v-model="salary"
             @keyup="onVarChange"
             type='tel'
+            color="blue-grey"
+            dense
           ></v-text-field>
         </v-col>
         <v-col
@@ -110,6 +157,8 @@
             v-model="rate"
             :items="items"
             @input="onVarChange"
+            color="blue-grey"
+            dense
           ></v-select>
         </v-col>
         
@@ -252,6 +301,10 @@ export default {
       { text: '自行負擔', value: 'self' },
       { text: '政府負擔', value: 'government' },
     ],
+    modeSwitch: false,
+    ordinaryAccidentInsuranceRate: 0.105,//勞保普通事故保險費率10.5%
+    employmentInsuranceRate: 0.01,//就業保險費率1%
+    healthInsuranceRate: 0.0517,//保險費率: 5.17%
   }),
   methods:{
     dayCalc(){
@@ -329,7 +382,7 @@ export default {
         const obj = this.Insurance[i];
         
         if(obj.name == "普通事故保險費"){
-          insurancePremium = this.laborSalaryLevel.premium * 0.105;//勞保普通事故保險費率10.5%
+          insurancePremium = this.laborSalaryLevel.premium * this.ordinaryAccidentInsuranceRate;
         }
         else if(obj.name == "職業災害保險費"){
           obj.company = Math.round(this.laborSalaryLevel.premium * this.rate /100 /30 * this.totalDate);
@@ -337,7 +390,7 @@ export default {
           continue;
         }
         else if(obj.name == "就業保險費"){
-          insurancePremium = this.laborSalaryLevel.premium * 0.01;//就業保險費率1%
+          insurancePremium = this.laborSalaryLevel.premium * this.employmentInsuranceRate;
         }
         else if(obj.name == "總計勞保負擔保費"){
           obj.government = governmentTotal;
@@ -371,11 +424,10 @@ export default {
         }
       }
 
-      var insurancePremium = 0.0517;//保險費率: 5.17%
 
-      this.Insurance[pos].government = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.1*1.58*this.totalMonth);
-      this.Insurance[pos].company = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.6*1.58*this.totalMonth);
-      this.Insurance[pos].self = Math.round(this.healthSalaryLevel.premium*insurancePremium*0.3*this.totalMonth);
+      this.Insurance[pos].government = Math.round(this.healthSalaryLevel.premium*this.healthInsuranceRate*0.1*1.58*this.totalMonth);
+      this.Insurance[pos].company = Math.round(this.healthSalaryLevel.premium*this.healthInsuranceRate*0.6*1.58*this.totalMonth);
+      this.Insurance[pos].self = Math.round(this.healthSalaryLevel.premium*this.healthInsuranceRate*0.3*this.totalMonth);
 
     },
     onVarChange(){
