@@ -326,6 +326,8 @@ export default {
           dateStart = dateEnd;
           dateEnd = swap;
         }
+        
+        if(dateEnd[1] == 2 && (dateEnd[2] == 28 || dateEnd[2] == 29))dateEnd[2] = 30;
 
         var base = dateStart[0];
         var yearCount = dateEnd[0]-dateStart[0];
