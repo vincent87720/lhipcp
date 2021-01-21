@@ -112,7 +112,7 @@
           sm="12"
         >
           <v-alert
-            class="d-flex justify-center align-stretch"
+            class="d-flex justify-center align-stretch fill-height"
             color="blue-grey"
             dark
             dense
