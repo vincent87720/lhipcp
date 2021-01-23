@@ -3,9 +3,10 @@
     <v-container fluid>
       <v-row align="center">
         <v-col
-          class="d-flex justify-start align-center order-sm-first order-last"
-          cols="12"
-          sm="4"
+          class="d-flex justify-start align-center order-1 order-sm-1 order-md-first"
+          cols="6"
+          sm="6"
+          md="4"
         >
           <v-switch
             class="pl-1 mt-0"
@@ -17,13 +18,32 @@
           ></v-switch>
         </v-col>
         <v-col
-          class="d-flex justify-center"
+          class="d-flex justify-center order-first order-sm-first"
           cols="12"
-          sm="4"
+          sm="12"
+          md="4"
         >
           <h2>勞健保計算程式</h2>
         </v-col>
-        <v-spacer class=" order-sm-last order-first"></v-spacer>
+        <v-col
+          class="d-flex justify-end align-center order-2 order-sm-2"
+          cols="6"
+          sm="6"
+          md="4"
+        >
+          <v-btn
+            color="blue-grey"
+            class="ma-2 white--text"
+            @click.stop="rangeSetDialog = true"
+            outlined
+          >
+            <v-icon
+            >
+              mdi-table
+            </v-icon>
+            級距表
+          </v-btn>
+        </v-col>
       </v-row>
 
       <v-row>
@@ -196,6 +216,63 @@
         </v-col>
       </v-row>
     </v-container>
+    <v-dialog
+      v-model="rangeSetDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          勞工保險投保薪資分級表
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <v-simple-table>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    投保薪資等級
+                  </th>
+                  <th class="text-left">
+                    起始薪資
+                  </th>
+                  <th class="text-left">
+                    結束薪資
+                  </th>
+                  <th class="text-left">
+                    月投保薪資
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="item in laborRangeSet"
+                  :key="item.level"
+                >
+                  <td>{{ item.level }}</td>
+                  <td>{{ item.rangeStart }}</td>
+                  <td>{{ item.rangeEnd == null ? ">"+item.rangeStart : item.rangeEnd }}</td>
+                  <td>{{ item.premium }}</td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue-grey"
+            text
+            @click="rangeSetDialog = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
@@ -208,6 +285,7 @@ export default {
   },
 
   data: () => ({
+    rangeSetDialog:false,
     salary:"",
     laborSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
     healthSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
