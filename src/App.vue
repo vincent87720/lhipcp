@@ -385,6 +385,53 @@ export default {
     healthInsuranceRate: 0.0517,//保險費率: 5.17%
   }),
   methods:{
+    checkLeapYear(year){
+      if ((year%4==0&&year%100!=0) || year%400==0) {
+        return true;
+      }else{
+        return false;
+      }
+    },
+    getLastDay(month,leapyear){
+      var lastday = 0;
+      switch(month){
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+          lastday = 31;
+          break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+          lastday = 30;
+          break;
+        case 2:
+          (leapyear) ? lastday = 29 : lastday = 28;
+          break;
+        default:
+          lastday=30;
+      }
+      return lastday;
+    },
+    checkFullMonth(dateStart,dateEnd){
+      var leapyear = false;
+      var lastday = 0;
+      if(dateStart[2] != 1){
+        return false;
+      }
+      leapyear = this.checkLeapYear(dateEnd[0]);
+      lastday = this.getLastDay(dateEnd[1],leapyear);
+      if (lastday != dateEnd[2]){
+        return false;
+      }
+
+      return true;
+    },
     dayCalc(){
       var totalDate = 0;
       if(this.dates.length > 1){
@@ -405,31 +452,62 @@ export default {
           dateEnd = swap;
         }
         
-        if(dateEnd[1] == 2 && (dateEnd[2] == 28 || dateEnd[2] == 29))dateEnd[2] = 30;
-
-        var base = dateStart[0];
         var yearCount = dateEnd[0]-dateStart[0];
         var monthStart = dateStart[1];
         var monthEnd = yearCount*12+dateEnd[1];
         this.totalMonth = monthEnd-monthStart+1;
-        while(monthStart != monthEnd){
-          if(dateEnd[2]>30){
-            totalDate+=30;
-          }
-          else{
-            totalDate+=dateEnd[2];
-          }
-          dateEnd[2] = 30;
-          monthEnd -= 1;
-        }
-        if(dateEnd[2]>30){
-          dateEnd[2] = 30;
-        }
-        if(dateStart[2]>=30){
-          totalDate += 1;
+
+        var leapyear = false;
+        var lastmonthlastday = 30;
+        var firstmonthlastday = 30;
+
+        leapyear = this.checkLeapYear(dateEnd[0]);
+        lastmonthlastday = this.getLastDay(dateEnd[1],leapyear);
+        firstmonthlastday = this.getLastDay(dateStart[1],leapyear);
+
+        if(dateStart[2] == 1 && dateEnd[2] == lastmonthlastday){
+          //若是全月(開始日期為1號，結束日期為該月最後一天)，則將月份數*30天
+          totalDate = (monthEnd-monthStart+1)*30;
         }
         else{
-          totalDate += dateEnd[2] - dateStart[2] + 1;
+          //若非全月
+
+          //若總月份數為一個月，直接計算日期天數
+          if(this.totalMonth < 2){
+            if(dateStart[2] >= 30){
+              totalDate+= 1;//若該月天數超過30天則算為30天
+            }
+            else{
+              totalDate+=dateEnd[2]-dateStart[2]+1;
+            }
+          }
+
+          //若總月份數大於1個月(2個月(包含)以上)
+          if(this.totalMonth >= 2){
+
+            //加上最後一個月的天數，需判斷最後一個月是否為全月
+            if (lastmonthlastday == dateEnd[2]){
+              totalDate+= 30;
+            }
+            else{
+              totalDate+= dateEnd[2];
+            }
+
+            //加上第一個月的天數，需判斷第一個月是否為全月
+            if(dateStart[2] == 1){
+              totalDate+= 30;
+            }
+            else if(dateStart[2] >= 30){
+              totalDate+= 1;//若該月天數超過30天則算為30天
+            }
+            else{
+              totalDate+=firstmonthlastday-dateStart[2]+1
+            }
+          }
+          if(this.totalMonth > 2){
+            //加上中間月份的天數
+            totalDate+=(this.totalMonth-2)*30
+          }
         }
       }
       else{
