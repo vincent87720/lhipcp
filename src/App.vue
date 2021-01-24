@@ -516,6 +516,46 @@ export default {
       
       this.totalDate = totalDate;
     },
+    test_dayCalc(){
+      var testTable = [
+        { date: ["2020-01-01","2020-01-01"], expectedDays: 1 },
+        { date: ["2020-01-01","2020-01-02"], expectedDays: 2 },
+        { date: ["2020-01-01","2020-01-29"], expectedDays: 29 },
+        { date: ["2020-01-01","2020-01-30"], expectedDays: 30 },
+        { date: ["2020-01-01","2020-01-31"], expectedDays: 30 },
+        { date: ["2020-01-02","2020-01-29"], expectedDays: 28 },
+        { date: ["2020-01-02","2020-01-30"], expectedDays: 29 },
+        { date: ["2020-01-02","2020-01-31"], expectedDays: 30 },
+        { date: ["2020-01-29","2020-01-31"], expectedDays: 3 },
+        { date: ["2020-01-30","2020-01-31"], expectedDays: 1 },
+        { date: ["2020-01-01","2020-02-01"], expectedDays: 31 },
+        { date: ["2020-01-01","2020-02-28"], expectedDays: 58 },
+        { date: ["2020-01-01","2020-02-29"], expectedDays: 60 },
+        { date: ["2020-01-02","2020-02-28"], expectedDays: 58 },
+        { date: ["2020-01-03","2020-02-28"], expectedDays: 57 },
+        { date: ["2020-01-03","2020-02-29"], expectedDays: 59 },
+        { date: ["2020-01-01","2020-03-29"], expectedDays: 89 },
+        { date: ["2020-01-01","2020-03-30"], expectedDays: 90 },
+        { date: ["2020-01-01","2020-03-31"], expectedDays: 90 },
+        { date: ["2020-01-02","2020-03-29"], expectedDays: 89 },
+        { date: ["2020-01-02","2020-03-30"], expectedDays: 90 },
+        { date: ["2020-01-02","2020-03-31"], expectedDays: 90 },
+        { date: ["2020-01-03","2020-03-29"], expectedDays: 88 },
+        { date: ["2020-01-03","2020-03-30"], expectedDays: 89 },
+        { date: ["2020-01-03","2020-03-31"], expectedDays: 89 },
+      ]
+      var pass = true;
+
+      for(var i=0;i<testTable.length;i++){
+        this.dates = testTable[i].date;
+        this.dayCalc();
+        if(this.totalDate != testTable[i].expectedDays){
+          console.log("testDate:",testTable[i].date,"expectedDays:",testTable[i].expectedDays," actual:",this.totalDate)
+          pass = false;
+        }
+      }
+      console.log("test_dayCalc: ",(pass)? "pass" : "fail")
+    },
     laborPaymentCalculate(){
 
       //判斷所屬級距並將級距資訊放入laborSalaryLevel
