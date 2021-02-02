@@ -1,21 +1,64 @@
 <template>
   <v-app>
     <v-container fluid>
-      <v-row align="center">
+      <v-row align="center" class="mt-3 mb-3">
         <v-col
-          class="d-flex justify-start align-center order-1 order-sm-1 order-md-first"
+          class="d-flex order-1 order-sm-1 order-md-first"
           cols="6"
           sm="6"
           md="4"
         >
-          <v-switch
-            class="pl-1 mt-0"
-            v-model="modeSwitch"
-            color="blue-grey"
-            inset
-            dense
-            :label="`${modeSwitch ? '雇主':'員工'}`"
-          ></v-switch>
+          <v-speed-dial
+            v-model="fab"
+            direction="right"
+            transition="slide-x-transition"
+          >
+            <template v-slot:activator>
+              <v-btn
+                v-model="fab"
+                color="blue-grey"
+                dark
+                fab
+                small
+              >
+                <v-icon v-if="fab">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else>
+                  mdi-dots-horizontal
+                </v-icon>
+              </v-btn>
+            </template>
+            
+            <div class="d-flex flex-column justify-start mt-4">
+              <v-switch
+                class="pa-0 ma-0"
+                style="width:190px;"
+                v-model="modeSwitch"
+                color="blue-grey"
+                inset
+                dense
+                :label="`${modeSwitch ? '雇主':'員工'}`"
+              ></v-switch>
+              <v-switch
+                class="pa-0 ma-0"
+                v-model="stateChange"
+                color="blue-grey"
+                inset
+                dense
+                :label="`${stateChange ? '有加退保':'無加退保'}`"
+              ></v-switch>
+              <v-switch
+                class="pa-0 ma-0"
+                v-model="stateChangeInSameMonth"
+                color="blue-grey"
+                inset
+                dense
+                :label="`${stateChangeInSameMonth ? '同月份加退保':'非同月加退保'}`"
+              ></v-switch>
+            </div>
+              
+          </v-speed-dial>
         </v-col>
         <v-col
           class="d-flex justify-center order-first order-sm-first"
@@ -285,6 +328,9 @@ export default {
   },
 
   data: () => ({
+    fab: false,
+    stateChange:false,
+    stateChangeInSameMonth: false,
     rangeSetDialog:false,
     salary:"",
     laborSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
@@ -465,48 +511,73 @@ export default {
         lastmonthlastday = this.getLastDay(dateEnd[1],leapyear);
         firstmonthlastday = this.getLastDay(dateStart[1],leapyear);
 
-        if(dateStart[2] == 1 && dateEnd[2] == lastmonthlastday){
-          //若是全月(開始日期為1號，結束日期為該月最後一天)，則將月份數*30天
-          totalDate = (monthEnd-monthStart+1)*30;
+        if(this.stateChangeInSameMonth == true){//同月加退保
+          if(dateEnd[2] > 30){
+            dateEnd[2] = 30;
+          }
+          totalDate = dateEnd[2]-dateStart[2]+1;
         }
         else{
-          //若非全月
-
-          //若總月份數為一個月，直接計算日期天數
-          if(this.totalMonth < 2){
-            if(dateStart[2] >= 30){
-              totalDate+= 1;//若該月天數超過30天則算為30天
-            }
-            else{
-              totalDate+=dateEnd[2]-dateStart[2]+1;
-            }
+          if(dateStart[2] == 1 && dateEnd[2] == lastmonthlastday && this.stateChange == false){//全月
+            //若是全月(開始日期為1號，結束日期為該月最後一天)，則將月份數*30天
+            totalDate = (monthEnd-monthStart+1)*30;
           }
+          else{//非全月(有加或有退)
+            
+            //若總月份數為一個月，直接計算日期天數
+            if(this.totalMonth < 2){
+              if(dateStart[2] == 1 && dateEnd[2] != lastmonthlastday){//當月退保
+                if(dateEnd[2]>30){
+                  dateEnd[2] = 30;
+                }
+                totalDate = dateEnd[2];
+              }
+              else if(dateStart[2] != 1 && dateEnd[2] == lastmonthlastday){//當月加保
+                if(dateStart[2] > 30){
+                  dateStart[2] = 30;
+                }
+                totalDate = 30-dateStart[2]+1
+              }
+              else if(dateStart[2] == 1 && dateEnd[2] == lastmonthlastday){
+                if(dateEnd[2] > 30){
+                  dateEnd[2] = 30;
+                }
+                totalDate = dateEnd[2]-dateStart[2]+1
+              }
+              else if(dateStart[2] != 1 && dateEnd[2] != lastmonthlastday){
+                if(dateEnd[2] > 30){
+                  dateEnd[2] = 30;
+                }
+                totalDate = dateEnd[2]-dateStart[2]+1;
+              }
+            }
 
-          //若總月份數大於1個月(2個月(包含)以上)
-          if(this.totalMonth >= 2){
+            //若總月份數大於1個月(2個月(包含)以上)
+            if(this.totalMonth >= 2){
 
-            //加上最後一個月的天數，需判斷最後一個月是否為全月
-            if (lastmonthlastday == dateEnd[2]){
-              totalDate+= 30;
-            }
-            else{
-              totalDate+= dateEnd[2];
-            }
+              //加上最後一個月的天數，需判斷最後一個月是否為全月
+              if (lastmonthlastday == dateEnd[2]){
+                totalDate+= 30;
+              }
+              else{
+                totalDate+= dateEnd[2];
+              }
 
-            //加上第一個月的天數，需判斷第一個月是否為全月
-            if(dateStart[2] == 1){
-              totalDate+= 30;
+              //加上第一個月的天數，需判斷第一個月是否為全月
+              if(dateStart[2] == 1){
+                totalDate+= 30;
+              }
+              else if(dateStart[2] >= 30){
+                totalDate+= 1;//若該月天數超過30天則算為30天
+              }
+              else{
+                totalDate+=30-dateStart[2]+1
+              }
             }
-            else if(dateStart[2] >= 30){
-              totalDate+= 1;//若該月天數超過30天則算為30天
+            if(this.totalMonth > 2){
+              //加上中間月份的天數
+              totalDate+=(this.totalMonth-2)*30
             }
-            else{
-              totalDate+=firstmonthlastday-dateStart[2]+1
-            }
-          }
-          if(this.totalMonth > 2){
-            //加上中間月份的天數
-            totalDate+=(this.totalMonth-2)*30
           }
         }
       }
