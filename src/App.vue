@@ -40,6 +40,7 @@
                 inset
                 dense
                 :label="`${modeSwitch ? '雇主':'員工'}`"
+                @change="onVarChange()"
               ></v-switch>
               <v-switch
                 class="pa-0 ma-0"
@@ -48,6 +49,7 @@
                 inset
                 dense
                 :label="`${stateChange ? '有加退保':'無加退保'}`"
+                @change="onVarChange()"
               ></v-switch>
               <v-switch
                 class="pa-0 ma-0"
@@ -56,6 +58,7 @@
                 inset
                 dense
                 :label="`${stateChangeInSameMonth ? '同月份加退保':'非同月加退保'}`"
+                @change="onVarChange()"
               ></v-switch>
             </div>
               
@@ -940,8 +943,6 @@ export default {
         this.Insurance[pos].self = Math.round(this.pensionSalaryLevel.premium*0.035);
       }
       else{
-        console.log(parseInt(this.totalDate/30));
-        console.log(this.totalDate%30);
         this.Insurance[pos].company = Math.round(this.pensionSalaryLevel.premium/30.0*0.06*parseInt(this.totalDate/30)+this.pensionSalaryLevel.premium/30.0*0.06*(this.totalDate%30));
         this.Insurance[pos].self = Math.round(this.pensionSalaryLevel.premium/30.0*0.035*parseInt(this.totalDate/30)+this.pensionSalaryLevel.premium/30.0*0.02*(this.totalDate%30));
       }
