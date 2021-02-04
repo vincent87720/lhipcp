@@ -3,25 +3,25 @@
     <v-container fluid>
       <v-row align="center" class="mt-3 mb-3">
         <v-col
-          class="d-flex order-1 order-sm-1 order-md-first"
+          class="d-flex justify-start order-1 order-md-0"
           cols="6"
           sm="6"
           md="4"
         >
           <v-speed-dial
-            v-model="fab"
+            v-model="speedDialMode"
             direction="right"
             transition="slide-x-transition"
           >
             <template v-slot:activator>
               <v-btn
-                v-model="fab"
+                v-model="speedDialMode"
                 color="blue-grey"
                 dark
                 fab
                 small
               >
-                <v-icon v-if="fab">
+                <v-icon v-if="speedDialMode">
                   mdi-close
                 </v-icon>
                 <v-icon v-else>
@@ -61,7 +61,7 @@
           </v-speed-dial>
         </v-col>
         <v-col
-          class="d-flex justify-center order-first order-sm-first"
+          class="d-flex justify-center order-0 order-md-1"
           cols="12"
           sm="12"
           md="4"
@@ -69,7 +69,7 @@
           <h2>勞健保計算程式</h2>
         </v-col>
         <v-col
-          class="d-flex justify-end align-center order-2 order-sm-2"
+          class="d-flex justify-end align-center order-2 order-md-2"
           cols="6"
           sm="6"
           md="4"
@@ -92,7 +92,7 @@
       <v-row>
         <v-col
           cols="12"
-          md="6"
+          md="4"
           sm="12"
         >
           <v-alert
@@ -107,7 +107,22 @@
         </v-col>
         <v-col
           cols="12"
-          md="6"
+          md="4"
+          sm="12"
+        >
+          <v-alert
+            class="d-flex justify-center align-center"
+            border="top"
+            color="blue-grey lighten-1"
+            dark
+            dense
+          >
+            <h3>勞退{{modeSwitch ? '雇主':'自行'}}負擔總計{{modeSwitch ? Insurance[5].company:Insurance[5].self}}元</h3>
+          </v-alert>
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
           sm="12"
         >
           <v-alert
@@ -124,70 +139,129 @@
       <v-row>
         <!-- 顯示勞保計算公式 -->
         <v-col
-          class="order-xl-0 order-lg-0 order-md-0 order-3 d-flex justify-center align-stretch flex-column"
+          class="order-4 order-md-0 d-flex align-stretch flex-column"
           cols="12"
-          md="6"
+          md="4"
           sm="12"
         >
           <v-alert
-            class="d-flex justify-center align-center"
+            class="d-flex justify-start justify-md-center align-center"
             color="blue-grey"
             dark
             dense
           >
             <h3>普通事故保險費</h3>
-            <p>
-              {{laborSalaryLevel.premium}}(投保薪資) *{{ordinaryAccidentInsuranceRate*100}}%(普通事故保險費費率)
-              {{modeSwitch ? '*70%(雇主負擔比率)':'*20%(自行負擔比率)'}}
-              /30(每月天數) *{{totalDate}}(實際天數)
-              ={{modeSwitch ? Insurance[0].company:Insurance[0].self}}
+            <p v-if="modeSwitch">
+              {{laborSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{ordinaryAccidentInsuranceRate*100}}%(普通事故保險費費率)&nbsp;
+              *70%(雇主負擔比率)&nbsp;
+              /30(每月天數)&nbsp;
+              *{{totalDate}}(實際天數)&nbsp;
+              ={{Insurance[0].company}}
+            </p>
+            <p v-else>
+              {{laborSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{ordinaryAccidentInsuranceRate*100}}%(普通事故保險費費率)&nbsp;
+              *20%(自行負擔比率)&nbsp;
+              /30(每月天數)&nbsp;
+              *{{totalDate}}(實際天數)&nbsp;
+              ={{Insurance[0].self}}
             </p>
             
             <h3>+</h3>
             <h3>職業災害保險費</h3>
-            <p>
-            {{modeSwitch ? laborSalaryLevel.premium :'0'}}
-            {{modeSwitch ? '(投保薪資) *':''}}
-            {{modeSwitch ? rate:''}}
-            {{modeSwitch ? '%(職業災害保險費費率) /30(每月天數) *':''}}
-            {{modeSwitch ? totalDate:''}}
-            {{modeSwitch ? '(實際天數)=':''}}
-            {{modeSwitch ? Insurance[1].company:''}}
-            
+            <p v-if="modeSwitch">
+              {{laborSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{rate}}%(職業災害保險費費率)&nbsp;
+              /30(每月天數)&nbsp;
+              *{{totalDate}}(實際天數)&nbsp;
+              ={{Insurance[1].company}}
+            </p>
+            <p v-else>
+              0
+            </p>
             <h3>+</h3>
             <h3>就業保險費</h3>
-            <p>
-              {{laborSalaryLevel.premium}}(投保薪資) *{{employmentInsuranceRate*100}}%(就業保險費費率)
-              {{modeSwitch ? '*70%(雇主負擔比率)':'*20%(自行負擔比率)'}}
-              /30(每月天數) *{{totalDate}}(實際天數)
-              ={{modeSwitch ? Insurance[2].company:Insurance[2].self}}
+            <p v-if="modeSwitch">
+              {{laborSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{employmentInsuranceRate*100}}%(就業保險費費率)&nbsp;
+              *70%(雇主負擔比率)&nbsp;
+              /30(每月天數)&nbsp;
+              *{{totalDate}}(實際天數)&nbsp;
+              ={{Insurance[2].company}}
+            </p>
+            <p v-else>
+              {{laborSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{employmentInsuranceRate*100}}%(就業保險費費率)&nbsp;
+              *20%(雇主負擔比率)&nbsp;
+              /30(每月天數)&nbsp;
+              *{{totalDate}}(實際天數)&nbsp;
+              ={{Insurance[2].self}}
             </p>
             <h3>=</h3>
             <h3>總金額</h3>
             <h3>{{modeSwitch ? Insurance[3].company:Insurance[3].self}}</h3>
           </v-alert>
         </v-col>
-        <!-- 顯示健保計算公式 -->
+        <!-- 顯示勞退計算公式 -->
         <v-col
-          class="order-xl-1 order-lg-1 order-md-1 order-4 d-flex justify-center align-stretch flex-column"
+          class="order-5 order-md-1 d-flex align-stretch flex-column"
           cols="12"
-          md="6"
+          md="4"
           sm="12"
         >
           <v-alert
-            class="d-flex justify-center align-stretch fill-height"
+            class="d-flex justify-start justify-md-center align-stretch fill-height"
+            color="blue-grey lighten-1"
+            dark
+            dense
+          >
+            <h3>勞工退休金{{modeSwitch ? '':'(非強制提繳)'}}</h3>
+            <p v-if="fullMonth">
+              {{pensionSalaryLevel.premium}}(月提繳薪資)
+              {{modeSwitch ? '*6%(雇主提繳比率)':'*3.5%(全月自願提繳比率)'}}
+              ={{modeSwitch ? Insurance[5].company:Insurance[5].self}}
+            </p>
+            <p v-else>
+              {{pensionSalaryLevel.premium}}(月提繳薪資)
+              /30(每月天數) *{{totalDate}}(實際天數)
+              {{modeSwitch ? '*6%(雇主提繳比率)':'*2%(非全月自願提繳比率)'}}
+              ={{modeSwitch ? Insurance[5].company:Insurance[5].self}}
+            </p>
+            <h3>=</h3>
+            <h3>總金額</h3>
+            <h3>{{modeSwitch ? Insurance[5].company:Insurance[5].self}}</h3>
+          </v-alert>
+        </v-col>
+        <!-- 顯示健保計算公式 -->
+        <v-col
+          class="order-6 order-md-2 d-flex align-stretch flex-column"
+          cols="12"
+          md="4"
+          sm="12"
+        >
+          <v-alert
+            class="d-flex justify-start justify-md-center align-stretch fill-height"
             color="blue-grey"
             dark
             dense
             text
           >
             <h3>健保保險費</h3>
-            <p>
-              {{healthSalaryLevel.premium}}(投保薪資) *{{healthInsuranceRate*100}}%(健保保險費費率)
-              {{modeSwitch ? '*60%(雇主負擔比率)':'*30%(自行負擔比率)'}}
-              *{{totalMonth}}(月份數量)
-              {{modeSwitch ? '*1.58(1+平均眷口數)':''}}
-              ={{modeSwitch ? Insurance[4].company:Insurance[4].self}}
+            <p v-if="modeSwitch">
+              {{healthSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{healthInsuranceRate*100}}%(健保保險費費率)&nbsp;
+              *60%(雇主負擔比率)&nbsp;
+              *{{totalMonth}}(月份數量)&nbsp;
+              *1.58(1+平均眷口數)&nbsp;
+              ={{Insurance[4].company}}
+            </p>
+            <p v-else>
+              {{healthSalaryLevel.premium}}(投保薪資)&nbsp;
+              *{{healthInsuranceRate*100}}%(健保保險費費率)&nbsp;
+              *30%(自行負擔比率)&nbsp;
+              *{{totalMonth}}(月份數量)&nbsp;
+              ={{Insurance[4].self}}
             </p>
             <h3>=</h3>
             <h3>總金額</h3>
@@ -195,7 +269,7 @@
           </v-alert>
         </v-col>
         <v-col
-          class="order-xl-2 order-lg-2 order-md-2 order-0"
+          class="order-0 order-md-3"
           cols="12"
           md="6"
           sm="12"
@@ -210,7 +284,7 @@
           ></v-text-field>
         </v-col>
         <v-col
-          class="order-xl-3 order-lg-3 order-md-3 order-5"
+          class="order-2 order-md-4"
           cols="12"
           md="6"
           sm="12"
@@ -226,13 +300,13 @@
         </v-col>
         
         <v-col 
-          class="d-flex d-md-none order-2"
+          class="d-flex d-md-none order-3"
         >
           <v-divider></v-divider>
         </v-col>
 
         <v-col
-          class="order-xl-4 order-lg-4 order-md-4 order-1"
+          class="order-2 order-md-5"
           cols="12"
           md="6"
           sm="12"
@@ -242,11 +316,12 @@
             @input="onVarChange"
             color="blue-grey"
             full-width
+            scrollable
             range
           ></v-date-picker>
         </v-col>
         <v-col
-          class="order-5"
+          class="order-6"
           cols="12"
           md="6"
           sm="12"
@@ -254,6 +329,7 @@
           <v-data-table
             :headers="table_Headers"
             :items="Insurance"
+            hide-default-footer
             class="elevation-1"
           ></v-data-table>
         </v-col>
@@ -328,19 +404,25 @@ export default {
   },
 
   data: () => ({
-    fab: false,
-    stateChange:false,
-    stateChangeInSameMonth: false,
-    rangeSetDialog:false,
-    salary:"",
+    salary:"",//薪水v-text-field欄位
+    rate: 0,//適用職業災害費率v-select欄位
+    dates: [],//使用v-date-picker選取的原始日期
+    speedDialMode: false,//開啟切換狀態群組的v-speed-dial狀態
+    modeSwitch: false,//切換員工或雇主的v-switch
+    stateChange:false,//切換是否有加退保的v-switch
+    stateChangeInSameMonth: false,//切換是否同月加退保的v-switch
+    rangeSetDialog:false,//開啟或關閉級距表的v-dialog
+
+    fullMonth:true,
+    totalMonth:0,//使用v-date-picker選取的總月份數
+    totalDate: 0,//使用v-date-picker選取的總天數
     laborSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
     healthSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
-    rate: 0,
-    dates: [],
-    totalMonth:0,
-    totalDate: 0,
-    items:[0.11,0.12,0.13,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,
-            0.26,0.27,0.28,0.37,0.39,0.40,0.41,0.47,0.48,0.53,0.61,0.92,0.96],
+    pensionSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
+
+    ordinaryAccidentInsuranceRate: 0.105,//勞保普通事故保險費率10.5%
+    employmentInsuranceRate: 0.01,//就業保險費率1%
+    healthInsuranceRate: 0.0517,//保險費率: 5.17%
     laborRangeSet: [
       {level: 1 ,rangeStart: 	0, rangeEnd: 24000, premium: 24000},
       {level: 2 ,rangeStart: 	24001, rangeEnd: 25200, premium: 25200},
@@ -407,12 +489,77 @@ export default {
       {level: 46,rangeStart: 169201, rangeEnd: 175600, premium: 175600},
       {level: 47,rangeStart: 175601, rangeEnd: null,   premium: 182000}
     ],
+    pensionRangeSet:[
+      {level: 1 , rangeStart:      0, rangeEnd:   1500, premium:   1500},
+      {level: 2 , rangeStart:   1501, rangeEnd:   3000, premium:   3000},
+      {level: 3 , rangeStart:   3001, rangeEnd:   4500, premium:   4500},
+      {level: 4 , rangeStart:   4501, rangeEnd:   6000, premium:   6000},
+      {level: 5 , rangeStart:   6001, rangeEnd:   7500, premium:   7500},
+      {level: 6 , rangeStart:   7501, rangeEnd:   8700, premium:   8700},
+      {level: 7 , rangeStart:   8701, rangeEnd:   9900, premium:   9900},
+      {level: 8 , rangeStart:   9901, rangeEnd:  11100, premium:  11100},
+      {level: 9 , rangeStart:  11101, rangeEnd:  12540, premium:  12540},
+      {level: 10, rangeStart:  12541, rangeEnd:  13500, premium:  13500},
+      {level: 11, rangeStart:  13501, rangeEnd:  15840, premium:  15840},
+      {level: 12, rangeStart:  15841, rangeEnd:  16500, premium:  16500},
+      {level: 13, rangeStart:  16501, rangeEnd:  17280, premium:  17280},
+      {level: 14, rangeStart:  17281, rangeEnd:  17880, premium:  17880},
+      {level: 15, rangeStart:  17881, rangeEnd:  19047, premium:  19047},
+      {level: 16, rangeStart:  19048, rangeEnd:  20008, premium:  20008},
+      {level: 17, rangeStart:  20009, rangeEnd:  21009, premium:  21009},
+      {level: 18, rangeStart:  21010, rangeEnd:  22000, premium:  22000},
+      {level: 19, rangeStart:  22001, rangeEnd:  23100, premium:  23100},
+      {level: 20, rangeStart:  23101, rangeEnd:  24000, premium:  24000},
+      {level: 21, rangeStart:  24001, rangeEnd:  25200, premium:  25200},
+      {level: 22, rangeStart:  25201, rangeEnd:  26400, premium:  26400},
+      {level: 23, rangeStart:  26401, rangeEnd:  27600, premium:  27600},
+      {level: 24, rangeStart:  27601, rangeEnd:  28800, premium:  28800},
+      {level: 25, rangeStart:  28801, rangeEnd:  30300, premium:  30300},
+      {level: 26, rangeStart:  30301, rangeEnd:  31800, premium:  31800},
+      {level: 27, rangeStart:  31801, rangeEnd:  33300, premium:  33300},
+      {level: 28, rangeStart:  33301, rangeEnd:  34800, premium:  34800},
+      {level: 29, rangeStart:  34801, rangeEnd:  36300, premium:  36300},
+      {level: 30, rangeStart:  36301, rangeEnd:  38200, premium:  38200},
+      {level: 31, rangeStart:  38201, rangeEnd:  40100, premium:  40100},
+      {level: 32, rangeStart:  40101, rangeEnd:  42000, premium:  42000},
+      {level: 33, rangeStart:  42001, rangeEnd:  43900, premium:  43900},
+      {level: 34, rangeStart:  43901, rangeEnd:  45800, premium:  45800},
+      {level: 35, rangeStart:  45801, rangeEnd:  48200, premium:  48200},
+      {level: 36, rangeStart:  48201, rangeEnd:  50600, premium:  50600},
+      {level: 37, rangeStart:  50601, rangeEnd:  53000, premium:  53000},
+      {level: 38, rangeStart:  53001, rangeEnd:  55400, premium:  55400},
+      {level: 39, rangeStart:  55401, rangeEnd:  57800, premium:  57800},
+      {level: 40, rangeStart:  57801, rangeEnd:  60800, premium:  60800},
+      {level: 41, rangeStart:  60801, rangeEnd:  63800, premium:  63800},
+      {level: 42, rangeStart:  63801, rangeEnd:  66800, premium:  66800},
+      {level: 43, rangeStart:  66801, rangeEnd:  69800, premium:  69800},
+      {level: 44, rangeStart:  69801, rangeEnd:  72800, premium:  72800},
+      {level: 45, rangeStart:  72801, rangeEnd:  76500, premium:  76500},
+      {level: 46, rangeStart:  76501, rangeEnd:  80200, premium:  80200},
+      {level: 47, rangeStart:  80201, rangeEnd:  83900, premium:  83900},
+      {level: 48, rangeStart:  83901, rangeEnd:  87600, premium:  87600},
+      {level: 49, rangeStart:  87601, rangeEnd:  92100, premium:  92100},
+      {level: 50, rangeStart:  92101, rangeEnd:  96600, premium:  96600},
+      {level: 51, rangeStart:  96601, rangeEnd: 101100, premium: 101100},
+      {level: 52, rangeStart: 101101, rangeEnd: 105600, premium: 105600},
+      {level: 53, rangeStart: 105601, rangeEnd: 110100, premium: 110100},
+      {level: 54, rangeStart: 110101, rangeEnd: 115500, premium: 115500},
+      {level: 55, rangeStart: 115501, rangeEnd: 120900, premium: 120900},
+      {level: 56, rangeStart: 120901, rangeEnd: 126300, premium: 126300},
+      {level: 57, rangeStart: 126301, rangeEnd: 131700, premium: 131700},
+      {level: 58, rangeStart: 131701, rangeEnd: 137100, premium: 137100},
+      {level: 59, rangeStart: 137101, rangeEnd: 142500, premium: 142500},
+      {level: 60, rangeStart: 142501, rangeEnd: 147900, premium: 147900},
+      {level: 61, rangeStart: 147901, rangeEnd: null  , premium: 150000},
+
+    ],
     Insurance:[
       {name: '普通事故保險費',government: 0 ,company: 0,self: 0},//普通事故保險
       {name: '職業災害保險費',government: 0 ,company: 0,self: 0},//職業災害保險
       {name: '就業保險費',government: 0 ,company: 0,self: 0},//就業保險
       {name: '總計勞保負擔保費',government: 0 ,company: 0,self: 0},//總計負擔保費
       {name: '健保保險費',government: 0 ,company: 0,self: 0},//健保保險
+      {name: '勞工退休金',government: 0 ,company: 0,self: 0},//勞工退休金
     ],
     table_Headers: [
       {
@@ -425,10 +572,8 @@ export default {
       { text: '自行負擔', value: 'self' },
       { text: '政府負擔', value: 'government' },
     ],
-    modeSwitch: false,
-    ordinaryAccidentInsuranceRate: 0.105,//勞保普通事故保險費率10.5%
-    employmentInsuranceRate: 0.01,//就業保險費率1%
-    healthInsuranceRate: 0.0517,//保險費率: 5.17%
+    items:[0.11,0.12,0.13,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,
+            0.26,0.27,0.28,0.37,0.39,0.40,0.41,0.47,0.48,0.53,0.61,0.92,0.96],
   }),
   methods:{
     checkLeapYear(year){
@@ -479,6 +624,7 @@ export default {
       return true;
     },
     dayCalc(){
+      this.fullMonth = false;
       var totalDate = 0;
       if(this.dates.length > 1){
         var dateStart = this.dates[0].split("-");
@@ -497,6 +643,8 @@ export default {
           dateStart = dateEnd;
           dateEnd = swap;
         }
+
+        this.fullMonth = this.checkFullMonth(dateStart,dateEnd);
         
         var yearCount = dateEnd[0]-dateStart[0];
         var monthStart = dateStart[1];
@@ -699,11 +847,43 @@ export default {
       this.Insurance[pos].self = Math.round(this.healthSalaryLevel.premium*this.healthInsuranceRate*0.3*this.totalMonth);
 
     },
+    pensionPaymentCalculate(){
+      //判斷所屬級距並將級距資訊放入pensionSalaryLevel
+      for (let index = this.pensionRangeSet.length-1; index >=0; index--) {
+        const element = this.pensionRangeSet[index];
+        if(this.salary>=element.rangeStart){
+          this.pensionSalaryLevel = element;
+          break
+        }
+      }
+
+      var pos = 0;
+      for(var i=0;i<this.Insurance.length;i++){
+        if(this.Insurance[i].name == "勞工退休金"){
+          pos = i;
+        }
+      }
+
+      
+      //全月
+      if(this.fullMonth == true){
+        this.Insurance[pos].company = Math.round(this.pensionSalaryLevel.premium*0.06);
+        this.Insurance[pos].self = Math.round(this.pensionSalaryLevel.premium*0.035);
+      }
+      else{
+        console.log(parseInt(this.totalDate/30));
+        console.log(this.totalDate%30);
+        this.Insurance[pos].company = Math.round(this.pensionSalaryLevel.premium/30.0*0.06*parseInt(this.totalDate/30)+this.pensionSalaryLevel.premium/30.0*0.06*(this.totalDate%30));
+        this.Insurance[pos].self = Math.round(this.pensionSalaryLevel.premium/30.0*0.035*parseInt(this.totalDate/30)+this.pensionSalaryLevel.premium/30.0*0.02*(this.totalDate%30));
+      }
+
+    },
     onVarChange(){
       
       this.dayCalc();
       this.laborPaymentCalculate();
       this.healthPaymentCalculate();
+      this.pensionPaymentCalculate();
     }
   }
 };
