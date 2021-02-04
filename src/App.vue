@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-container fluid>
-      <v-row align="center" class="mt-3 mb-3">
+      <v-row align="center">
         <v-col
           class="d-flex justify-start order-1 order-md-0"
           cols="6"
@@ -12,6 +12,7 @@
             v-model="speedDialMode"
             direction="right"
             transition="slide-x-transition"
+            class="mt-4 mb-4"
           >
             <template v-slot:activator>
               <v-btn
@@ -74,18 +75,57 @@
           sm="6"
           md="4"
         >
-          <v-btn
-            color="blue-grey"
-            class="ma-2 white--text"
-            @click.stop="rangeSetDialog = true"
-            outlined
+          <v-speed-dial
+            v-model="tableSpeedDial"
+            direction="left"
+            transition="slide-x-reverse-transition"
+            class="mt-4 mb-4"
           >
-            <v-icon
+            <template v-slot:activator>
+              <v-btn
+                v-model="tableSpeedDial"
+                color="blue-grey"
+                dark
+                fab
+                small
+              >
+                <v-icon v-if="tableSpeedDial">
+                  mdi-close
+                </v-icon>
+                <v-icon v-else>
+                  mdi-table
+                </v-icon>
+              </v-btn>
+            </template>
+          
+            <v-btn
+              color="blue-grey"
+              class="ma-2"
+              @click.stop="activeTableID = 0; activeTable = laborRangeSet; rangeSetDialog = true"
+              dark
+              small
             >
-              mdi-table
-            </v-icon>
-            級距表
-          </v-btn>
+              勞保
+            </v-btn>
+            <v-btn
+              color="blue-grey lighten-1"
+              class="ma-2"
+              @click.stop="activeTableID = 2; activeTable = healthRangeSet; rangeSetDialog = true"
+              dark
+              small
+            >
+              勞退
+            </v-btn>
+            <v-btn
+              color="blue-grey lighten-5"
+              class="ma-2 blue-grey--text"
+              @click.stop="activeTableID = 1; activeTable = pensionRangeSet; rangeSetDialog = true"
+              plain
+              small
+            >
+              健保
+            </v-btn>
+          </v-speed-dial>
         </v-col>
       </v-row>
 
@@ -341,7 +381,7 @@
     >
       <v-card>
         <v-card-title class="headline">
-          勞工保險投保薪資分級表
+          {{rageSetTable[activeTableID].title}}
         </v-card-title>
         <v-divider></v-divider>
         <v-card-text>
@@ -350,22 +390,22 @@
               <thead>
                 <tr>
                   <th class="text-left">
-                    投保薪資等級
+                    {{rageSetTable[activeTableID].col1}}
                   </th>
                   <th class="text-left">
-                    起始薪資
+                    {{rageSetTable[activeTableID].col2}}
                   </th>
                   <th class="text-left">
-                    結束薪資
+                    {{rageSetTable[activeTableID].col3}}
                   </th>
                   <th class="text-left">
-                    月投保薪資
+                    {{rageSetTable[activeTableID].col4}}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr
-                  v-for="item in laborRangeSet"
+                  v-for="item in activeTable"
                   :key="item.level"
                 >
                   <td>{{ item.level }}</td>
@@ -408,12 +448,15 @@ export default {
     rate: 0,//適用職業災害費率v-select欄位
     dates: [],//使用v-date-picker選取的原始日期
     speedDialMode: false,//開啟切換狀態群組的v-speed-dial狀態
+    tableSpeedDial: false,
     modeSwitch: false,//切換員工或雇主的v-switch
     stateChange:false,//切換是否有加退保的v-switch
     stateChangeInSameMonth: false,//切換是否同月加退保的v-switch
     rangeSetDialog:false,//開啟或關閉級距表的v-dialog
 
     fullMonth:true,
+    activeTable: null,
+    activeTableID:1,
     totalMonth:0,//使用v-date-picker選取的總月份數
     totalDate: 0,//使用v-date-picker選取的總天數
     laborSalaryLevel:{level: 0 ,rangeStart:  0,     rangeEnd: 0, premium: 0},
@@ -574,6 +617,32 @@ export default {
     ],
     items:[0.11,0.12,0.13,0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,
             0.26,0.27,0.28,0.37,0.39,0.40,0.41,0.47,0.48,0.53,0.61,0.92,0.96],
+    rageSetTable:[
+      { 
+        id:0,
+        title: '勞工保險投保薪資分級表',
+        col1:'投保薪資等級',
+        col2:'起始薪資',
+        col3:'結束薪資',
+        col4:'月投保薪資',
+      },
+      {
+        id:1,
+        title: '全民健康保險投保薪資分級表',
+        col1:'投保薪資等級',
+        col2:'起始薪資',
+        col3:'結束薪資',
+        col4:'月投保薪資',
+      },
+      {
+        id:2,
+        title: '勞工退休金提繳薪資分級表',
+        col1:'提繳薪資等級',
+        col2:'起始薪資',
+        col3:'結束薪資',
+        col4:'月提繳薪資',
+      },
+    ],
   }),
   methods:{
     checkLeapYear(year){
@@ -885,6 +954,6 @@ export default {
       this.healthPaymentCalculate();
       this.pensionPaymentCalculate();
     }
-  }
+  },
 };
 </script>
