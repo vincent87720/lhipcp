@@ -135,6 +135,21 @@
       <v-row>
         <v-col
           cols="12"
+          md="12"
+          sm="12"
+        >
+          <v-alert
+            class="d-flex justify-center align-center"
+            color="blue-grey"
+            outlined
+            dense
+          >
+            <h3 v-if="modeSwitch == true">勞保+健保+勞退 雇主負擔總計{{Insurance[3].company+Insurance[4].company+Insurance[5].company}}元</h3>
+            <h3 v-else>勞保+健保 自行負擔總計{{Insurance[3].self+Insurance[4].self}}元</h3>
+          </v-alert>
+        </v-col>
+        <v-col
+          cols="12"
           md="4"
           sm="12"
         >
