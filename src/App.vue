@@ -133,10 +133,80 @@
       </v-row>
 
       <v-row>
+        <!-- 薪水輸入欄位 -->
+        <v-col
+          class="order-0"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-text-field
+            label="薪水"
+            v-model="salary"
+            @keyup="onVarChange"
+            type='tel'
+            color="blue-grey"
+            dense
+          ></v-text-field>
+        </v-col>
+        <!-- 適用職業災害費率選單 -->
+        <v-col
+          class="order-1"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-select
+            label="適用職業災害費率"
+            v-model="rate"
+            :items="items"
+            @input="onVarChange"
+            color="blue-grey"
+            dense
+          ></v-select>
+        </v-col>
+        <!-- 日期選擇器 -->
+        <v-col
+          class="order-2"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-date-picker
+            v-model="dates"
+            @input="onVarChange"
+            color="blue-grey"
+            full-width
+            scrollable
+            range
+          ></v-date-picker>
+        </v-col>
+        <!-- 分隔線 -->
+        <v-col 
+          class="d-flex d-md-none order-3"
+        >
+          <v-divider></v-divider>
+        </v-col>
+        <!-- 細項顯示區塊 -->
+        <v-col
+          class="order-11 order-md-3"
+          cols="12"
+          md="6"
+          sm="12"
+        >
+          <v-data-table
+            :headers="table_Headers"
+            :items="Insurance"
+            hide-default-footer
+            class="elevation-1"
+          ></v-data-table>
+        </v-col>
+        <!-- 負擔總額顯示區塊 -->
         <v-col
           cols="12"
           md="12"
           sm="12"
+          class="order-4"
         >
           <v-alert
             class="d-flex justify-center align-center"
@@ -148,10 +218,12 @@
             <h3 v-else>勞保+健保 自行負擔總計{{Insurance[3].self+Insurance[4].self}}元</h3>
           </v-alert>
         </v-col>
+        <!-- 勞保負擔總額顯示區塊 -->
         <v-col
           cols="12"
           md="4"
           sm="12"
+          class="order-5"
         >
           <v-alert
             class="d-flex justify-center align-center"
@@ -163,10 +235,12 @@
             <h3>勞保{{modeSwitch ? '雇主':'自行'}}負擔總計{{modeSwitch ? Insurance[3].company:Insurance[3].self}}元</h3>
           </v-alert>
         </v-col>
+        <!-- 勞退負擔總額顯示區塊 -->
         <v-col
           cols="12"
           md="4"
           sm="12"
+          class="order-6"
         >
           <v-alert
             class="d-flex justify-center align-center"
@@ -178,10 +252,12 @@
             <h3>勞退{{modeSwitch ? '雇主':'自行'}}負擔總計{{modeSwitch ? Insurance[5].company:Insurance[5].self}}元</h3>
           </v-alert>
         </v-col>
+        <!-- 健保負擔總額顯示區塊 -->
         <v-col
           cols="12"
           md="4"
           sm="12"
+          class="order-7"
         >
           <v-alert
             class="d-flex justify-center align-center"
@@ -193,11 +269,9 @@
             <h3>健保{{modeSwitch ? '雇主':'自行'}}負擔總計{{modeSwitch ? Insurance[4].company:Insurance[4].self}}元</h3>
           </v-alert>
         </v-col>
-      </v-row>
-      <v-row>
         <!-- 顯示勞保計算公式 -->
         <v-col
-          class="order-4 order-md-0 d-flex align-stretch flex-column"
+          class="order-8 d-flex align-stretch flex-column"
           cols="12"
           md="4"
           sm="12"
@@ -263,7 +337,7 @@
         </v-col>
         <!-- 顯示勞退計算公式 -->
         <v-col
-          class="order-5 order-md-1 d-flex align-stretch flex-column"
+          class="order-9 d-flex align-stretch flex-column"
           cols="12"
           md="4"
           sm="12"
@@ -293,7 +367,7 @@
         </v-col>
         <!-- 顯示健保計算公式 -->
         <v-col
-          class="order-6 order-md-2 d-flex align-stretch flex-column"
+          class="order-10 d-flex align-stretch flex-column"
           cols="12"
           md="4"
           sm="12"
@@ -325,71 +399,6 @@
             <h3>總金額</h3>
             <h3>{{modeSwitch ? Insurance[4].company:Insurance[4].self}}</h3>
           </v-alert>
-        </v-col>
-        <v-col
-          class="order-0 order-md-3"
-          cols="12"
-          md="6"
-          sm="12"
-        >
-          <v-text-field
-            label="薪水"
-            v-model="salary"
-            @keyup="onVarChange"
-            type='tel'
-            color="blue-grey"
-            dense
-          ></v-text-field>
-        </v-col>
-        <v-col
-          class="order-2 order-md-4"
-          cols="12"
-          md="6"
-          sm="12"
-        >
-          <v-select
-            label="適用職業災害費率"
-            v-model="rate"
-            :items="items"
-            @input="onVarChange"
-            color="blue-grey"
-            dense
-          ></v-select>
-        </v-col>
-        
-        <v-col 
-          class="d-flex d-md-none order-3"
-        >
-          <v-divider></v-divider>
-        </v-col>
-
-        <v-col
-          class="order-2 order-md-5"
-          cols="12"
-          md="6"
-          sm="12"
-        >
-          <v-date-picker
-            v-model="dates"
-            @input="onVarChange"
-            color="blue-grey"
-            full-width
-            scrollable
-            range
-          ></v-date-picker>
-        </v-col>
-        <v-col
-          class="order-6"
-          cols="12"
-          md="6"
-          sm="12"
-        >
-          <v-data-table
-            :headers="table_Headers"
-            :items="Insurance"
-            hide-default-footer
-            class="elevation-1"
-          ></v-data-table>
         </v-col>
       </v-row>
     </v-container>
