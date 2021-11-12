@@ -1,11 +1,11 @@
 module.exports = {
   pwa: {
     name: "勞健保計算",
-    themeColor: '#607d8b',
+    themeColor: '#ffffff',
     msTileColor: '#607d8b',
     manifestOptions: {
       start_url: '.',
-      background_color: '#4c89fe'
+      background_color: '#ffffff'
     },
     workboxPluginMode: 'GenerateSW',
     workboxOptions: {
