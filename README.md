@@ -1,6 +1,6 @@
 # 勞健保自負額計算程式
 
-Labor and health insurance premium calculation tool written by Vue.js.
+Labor and health insurance calculator written by Vue.js.
 
 ## Pages link
 [勞健保自負額計算程式-lhipcp](https://vincent87720.github.io/lhipcp/)
